@@ -6,7 +6,7 @@
   <title>Hello wasm-pack!</title>
   <style>
     body {
-      position: absolute;
+      /* position: absolute;
       top: 0;
       left: 0;
       width: 100%;
@@ -14,10 +14,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-    }
+      justify-content: center; */
+      margin: 0;
+      overflow-y: hidden; 
+      overflow-x: hidden;
+  }
 
-    #fps {
+    /* #fps {
       white-space: pre;
       font-family: monospace;
     }
@@ -28,17 +31,17 @@
       right: 0;
       width: 1000px;
       border: 3px solid #73AD21;
-    }
+    } */
   </style>
 </head>
 
 <body>
-  <div id="ui">
+  <!-- <div id="ui">
     <button id="play-pause"></button>
     <button id="step"></button>
     <div id="fps"></div>
   </div>
-  <canvas id="game-of-life-canvas"></canvas>
+  <canvas id="game-of-life-canvas"></canvas> -->
   <script src="./bootstrap.js"></script>
 </body>
 
