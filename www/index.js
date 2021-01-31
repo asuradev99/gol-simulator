@@ -185,7 +185,7 @@ const drawCells = () => {
         CELL_SIZE,
       );
     }
-  } else {
+  } else if (RENDER_MODE === 2) {
     ctx.fillStyle = ALIVE_COLOR;
     for (let row = 0; row < height; row++) {
       for (let col = 0; col < width; col++) {
