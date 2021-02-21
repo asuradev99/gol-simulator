@@ -2,9 +2,9 @@ import { Universe, Cell } from "wasm-game-of-life";
 import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
 
 const CELL_SIZE = 1; // px
-const ALIVE_COLOR = "#FFFFFF";
-const DEAD_COLOR = "#000000";
-const GRID_COLOR = DEAD_COLOR;
+const ALIVE_COLOR = "#000000";
+const DEAD_COLOR = "#FFFFFF";
+//const GRID_COLOR = DEAD_COLOR;
 
 const RENDER_MODE = 1;
 // Construct the universe, and get its width and height.
@@ -15,10 +15,17 @@ const height = universe.height();
 // Give the canvas room for all of our cells and a 1px border
 // around each of them.
 const canvas = document.getElementById("game-of-life-canvas");
+const b_canvas = document.createElement("canvas");
+
 canvas.height = (CELL_SIZE + 1) * height + 1;
 canvas.width = (CELL_SIZE + 1) * width + 1;
 
-const ctx = canvas.getContext('2d');
+b_canvas.height = canvas.height; 
+b_canvas.width = canvas.width;
+
+
+const ctx = canvas.getContext('2d', {alpha: false});
+const bctx = b_canvas.getContext('2d', {alpha: false});
 
 const fps = new class {
   constructor() {
@@ -108,28 +115,28 @@ stepButton.style.height = '200px';
 stepButton.addEventListener("click", event => {
   if (isPaused()) {
     drawCells();
-    drawGrid();
+    //drawGrid();
     universe.tick();
   }
 });
-const drawGrid = () => {
-  ctx.beginPath();
-  ctx.strokeStyle = GRID_COLOR;
+// const drawGrid = () => {
+//   ctx.beginPath();
+//   ctx.strokeStyle = GRID_COLOR;
 
-  // Vertical lines.
-  for (let i = 0; i <= width; i++) {
-    ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-    ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-  }
+//   // Vertical lines.
+//   for (let i = 0; i <= width; i++) {
+//     ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
+//     ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
+//   }
 
-  // Horizontal lines.
-  for (let j = 0; j <= height; j++) {
-    ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
-    ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-  }
+//   // Horizontal lines.
+//   for (let j = 0; j <= height; j++) {
+//     ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
+//     ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
+//   }
 
-  ctx.stroke();
-};
+//   ctx.stroke();
+// };
 
 const getIndex = (row, column) => {
   return row * width + column;
@@ -142,11 +149,10 @@ const drawCells = () => {
   const updates = new Uint32Array(memory.buffer, updatesPtr, width * height);
 
 
-  ctx.beginPath();
+  bctx.beginPath();
 
-  if (RENDER_MODE === 1) {
     // // Alive cells.
-    ctx.fillStyle = ALIVE_COLOR;
+    bctx.fillStyle = ALIVE_COLOR;
     for (let i = 0; i < updates.length; i++) {
       if (updates[i] < updates[i - 1]) {
         console.log("exited at ", i, ", ", updates[i - 1])
@@ -158,7 +164,7 @@ const drawCells = () => {
       }
       let row = Math.floor(idx / width);
       let col = idx % width;
-      ctx.fillRect(
+      bctx.fillRect(
         col * (CELL_SIZE + 1) + 1,
         row * (CELL_SIZE + 1) + 1,
         CELL_SIZE,
@@ -166,7 +172,7 @@ const drawCells = () => {
       );
     }
 
-    ctx.fillStyle = DEAD_COLOR;
+    bctx.fillStyle = DEAD_COLOR;
     for (let i = 0; i < updates.length; i++) {
       if (updates[i] < updates[i - 1]) {
         console.log("exited at ", i, ", ", updates[i - 1])
@@ -178,51 +184,16 @@ const drawCells = () => {
       }
       let row = Math.floor(idx / width);
       let col = idx % width;
-      ctx.fillRect(
+      bctx.fillRect(
         col * (CELL_SIZE + 1) + 1,
         row * (CELL_SIZE + 1) + 1,
         CELL_SIZE,
         CELL_SIZE,
       );
     }
-  } else if (RENDER_MODE === 2) {
-    ctx.fillStyle = ALIVE_COLOR;
-    for (let row = 0; row < height; row++) {
-      for (let col = 0; col < width; col++) {
-        const idx = getIndex(row, col);
-        if (cells[idx] !== Cell.Alive) {
-          continue;
-        }
 
-        ctx.fillRect(
-          col * (CELL_SIZE + 1) + 1,
-          row * (CELL_SIZE + 1) + 1,
-          CELL_SIZE,
-          CELL_SIZE
-        );
-      }
-    }
-
-    // Dead cells.
-    ctx.fillStyle = DEAD_COLOR;
-    for (let row = 0; row < height; row++) {
-      for (let col = 0; col < width; col++) {
-        const idx = getIndex(row, col);
-        if (cells[idx] !== Cell.Dead) {
-          continue;
-        }
-
-        ctx.fillRect(
-          col * (CELL_SIZE + 1) + 1,
-          row * (CELL_SIZE + 1) + 1,
-          CELL_SIZE,
-          CELL_SIZE
-        );
-      }
-    }
-  }
-
-  ctx.stroke();
+  bctx.stroke();
+  ctx.drawImage(b_canvas, 0, 0)
 };
 
 canvas.addEventListener("click", event => {
@@ -244,6 +215,6 @@ canvas.addEventListener("click", event => {
 });
 
 drawCells();
-drawGrid();
+//drawGrid();
 universe.tick();
 pause();
