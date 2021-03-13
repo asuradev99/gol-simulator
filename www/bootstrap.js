@@ -3,4 +3,4 @@
 // that no one else needs to worry about it again.
 let cur_entry = "./render.js"
 import("./index-2.js")
-  .catch(e => console.error("Error importing `index.js`:", e));
+  .catch(e => console.error("Error importing `index-2.js`:", e));

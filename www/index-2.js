@@ -19,7 +19,7 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext('2d', {alpha: false});
 
-const renderer = new Renderer(ctx, 1, width, height, 1, [[0, DEAD_COLOR], [1, ALIVE_COLOR]]);
+const renderer = new Renderer(canvas, 1, width, height, 1, [[0, DEAD_COLOR], [1, ALIVE_COLOR]]);
 
 
 const fps = new class {
@@ -71,13 +71,20 @@ let animationId = null;
 const renderLoop = () => {
   //ctx.clearRect(0, 0, canvas.width, canvas.height);
   fps.render();
-  renderer.setMemory(memory, universe.cells(), universe.updates());
-  renderer.batchRender();
-  //drawGrid();
+
+  drawRender();
+  // //drawGrid();
   universe.tick();
   animationId = requestAnimationFrame(renderLoop);
 };
 
+const drawRender = () => {
+  const cellsPtr = universe.cells();
+  const updatesPtr = universe.updates();
+
+  renderer.setMemory(memory.buffer, cellsPtr, updatesPtr);
+  renderer.batchRender();
+}
 const isPaused = () => {
   return animationId === null;
 };
@@ -211,7 +218,7 @@ canvas.addEventListener("click", event => {
 });
 
 //drawCells();
-renderer.batchRender();
+drawRender();
 //drawGrid();
 universe.tick();
 pause();
