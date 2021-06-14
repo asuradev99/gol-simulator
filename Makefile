@@ -4,4 +4,4 @@ all:
 build: 
 	wasm-pack build --release
 run: 
-	npm run start
+	cd www/ && npm run start
