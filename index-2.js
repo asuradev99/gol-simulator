@@ -6,7 +6,7 @@ const rustWasm = await wasmInit("./pkg/wasm_game_of_life_bg.wasm");
 
 let memory = rustWasm.memory;
 
-const CELL_SIZE = 5; // px
+const CELL_SIZE = 2; // px
 const ALIVE_COLOR = "#000000";
 const DEAD_COLOR = "#FFFFFF";
 //const GRID_COLOR = DEAD_COLOR;
